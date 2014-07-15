@@ -10,7 +10,8 @@ AUTHOR
 
 LICENSE
 
-    This script is in the public domain, free from copyrights or restrictions.
+    This script is released under the CC0 1.0 Universal
+    http://creativecommons.org/publicdomain/zero/1.0/
 """
 
 from __future__ import print_function
@@ -208,11 +209,11 @@ if __name__ == '__main__':
     try:
         main()
         sys.exit(0)
-    except KeyboardInterrupt, e: # Ctrl-C
+    except KeyboardInterrupt as e: # Ctrl-C
         raise e
-    except SystemExit, e: # sys.exit()
+    except SystemExit as e: # sys.exit()
         raise e
-    except Exception, e:
+    except Exception as e:
         print('ERROR, UNEXPECTED EXCEPTION')
         print(str(e))
         traceback.print_exc()
