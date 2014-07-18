@@ -20,8 +20,8 @@ import random
 import traceback
 import os, sys
 
-#class Deck:
-#    pass
+
+#Define Classes
 
 class Hand(object):
     "A hand of cards"
@@ -93,9 +93,10 @@ class Hand(object):
         return handvalue
 
 
+#Define auxiliary functions
 def draw_card():
     "Draw a random card"
-    return random.choice(range(52))
+    return random.randrange(0,52)
 
 def draw_initial_hands(dealerholecard = False):
     "Draw hands for the dealer and the player with two cards"
@@ -196,13 +197,6 @@ def main ():
         else:
             player_money -= bet
     print("You lost the game.")
-    #random.shuffle
-    #print(u'\u2660\u2661\u2662\u2663\u2664\u2665\u2666\u2667')
-    # DealerHand = draw_initial_hand()
-    # print(DealerHand.cards)
-    # print(DealerHand)
-    # print("Dealer hand value",DealerHand.value())
-    #
     return
 
 if __name__ == '__main__':
