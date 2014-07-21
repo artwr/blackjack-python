@@ -15,4 +15,8 @@ In the end, I opted for a list comprehension which seemed more compact than tryi
 
 ### Deck
 
-The deck is designed as an extension of CardCollection. Note that the order is of importance here, and the `pop()` method used 
+The deck is designed as an extension of CardCollection. Note that the order is of importance here, and the `pop()` method used returns the last card of the internal list. The deck could have been implemented as a `deque` from the `collections` module, but in this instance, it seemed unnecessary. The only detail to carefully consider was printing the deck in the right order.
+
+### blackjack.py
+
+Obviously, there are more features I wish I would have implemented. I started the work for splitting, and I am investigating saving the state of the game through a `pickle` object.

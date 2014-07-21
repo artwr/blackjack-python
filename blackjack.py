@@ -134,15 +134,15 @@ def print_welcome_msg():
     print(u" "*12+u"A\u2661 K\u2660"+u" "*12+"\n")
 
 
-def game_action():
+def want_another_round():
     while True:
         chosen_action = input("Would you like to:\n"
                               "1. [P]lay another round or\n"
                               "2. [Q]uit?\n")
         if chosen_action in ["P", "p", "1"]:
-            return "p"
+            return True
         elif chosen_action in ["Q", "q", "2"]:
-            return
+            return False
         else:
             print("Please make another selection using 'p' or 'q'\n")
             continue
@@ -166,15 +166,19 @@ def main():
     # Start round loop
     while player_money > 0:
         print("Round "+str(nround))
-        print("You have "+str(player_money)+" money units.")
+        print("You have "+str(player_money)+" chips.")
         if bdeck.number_cards_left < 8:
             bdeck = cards.Deck(ndecks)
-        win, bet = play_round(bdeck, player_money, play_with_holecards)
-        if win:
-            player_money += bet
+        if want_another_round():
+            win, bet = play_round(bdeck, player_money, play_with_holecards)
+            if win:
+                player_money += bet
+            else:
+                player_money -= bet
+            nround += 1
         else:
-            player_money -= bet
-        nround += 1
+            print("You left the table with "+str(player_money)+" chips.")
+            return
     print("You lost the game.")
     return
 
