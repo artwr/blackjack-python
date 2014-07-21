@@ -14,138 +14,44 @@ LICENSE
     http://creativecommons.org/publicdomain/zero/1.0/
 """
 
+# Imports
 import math
 import random
 import traceback
 import os
 import sys
 
-# Define Constants
+# Import custom cards module
+import cards
 
-CARD_RANKS = {
-    '0': "A",
-    '1': "2",
-    '2': "3",
-    '3': "4",
-    '4': "5",
-    '5': "6",
-    '6': "7",
-    '7': "8",
-    '8': "9",
-    '9': "10",
-    '10': "J",
-    '11': "Q",
-    '12': "K"
-}
-CARD_SUITS = {
-    '0': "\u2660",
-    '1': "\u2661",
-    '2': "\u2662",
-    '3': "\u2663"
-}
+# Define global constants
 
-
-# Define Classes
-
-class Card(object):
-    "A card class"
-    def __init__(self, cardnumber):
-        """Create a blackjack deck containing
-        ndecks deck of 52 cards.
-        """
-        self.card = cardnumber
-        self.rank = str(self.card % 13)
-        self.suit = str(self.card // 13)
-
-    def __str__(self):
-        handstr += u"{}{}".format(CARD_RANKS[self.rank], CARD_SUITS[self.suit])
-        return handstr
-
-
-class Deck(object):
-    "A deck of cards"
-    def __init__(self, ndecks=1):
-        """Create a blackjack deck containing
-        ndecks deck of 52 cards.
-        """
-        self.cards = []
-        for i in range(ndecks):
-            self.cards.extend(list(random.shuffle(range(52))))
-
-    def draw_card(self, n=1):
-        pass
-    pass
-
-
-class Hand(object):
-    "A hand of cards"
-    def __init__(self, ncards=2, holecard=False):
-        """Initialize a hand of cards for blackjack.
-        Defaults to 2 cards with no hidden card.
-        """
-        self.cards = []
-        self._hiddencard = []
-        self.number_of_cards = ncards
-        self.visible_cards = ncards
-        # Offers the possibility to hide a card ("hole cards")
-        if holecard:
-            self.visible_cards -= 1
-            self.hiddencard = [draw_card()]
-        for i in range(self.visible_cards):
-            self.cards.append(draw_card())
-
-    def __str__(self):
-        handstr = ""
-        for card in self.cards:
-            handstr += u" ".join(map())
-        return handstr
-
-    def add_card(self, newcard):
-        self.number_of_cards += 1
-        self.visible_cards += 1
-        self.cards.append(newcard)
-
-    def reveal_cards(self):
-        self.cards.extend(self.hiddencard)
-        self.visible_cards += len(self.hiddencard)
-        self.hiddencard = []
-
-    def value(self):
-        "returns the value of the hand"
-        handvalue = 0
-        for card in sorted(self.cards, reverse=True):
-            rank = card % 13
-            if rank > 0:
-                handvalue += min(10, rank+1)
-            elif handvalue + 11 > 21:
-                handvalue += 1
-            else:
-                handvalue += 11
-        return handvalue
-
+BLACKJACK_PAYOUT = 3.0/2
 
 # Define auxiliary functions
-def draw_card():
-    "Draw a random card"
-    return random.randrange(0, 52)
 
 
-def draw_initial_hands(dealerholecard=False):
+def draw_initial_hands(bljdeck, dealerholecard=False):
     "Draw hands for the dealer and the player with two cards"
-    return Hand(holecard=dealerholecard), Hand()
+    initial_cards = bljdeck.draw_cards(ncards=4)
+    dhand = cards.Hand(card_indices=[initial_cards[1], initial_cards[3]],
+                       holecard=dealerholecard)
+    phand = cards.Hand(card_indices=[initial_cards[0], initial_cards[2]])
+    return dhand, phand
 
 
 def bet(player_money):
     while True:
-        bet_str = input("How much would you like to bet? [1-"+str(player_money)+"]\n")
+        bet_str = input("How much would you like to bet?"
+                        " [1-"+str(player_money)+"]\n")
         try:
             bet = int(bet_str.strip())
         except ValueError:
             print("You must enter an integer\n")
         else:
             if bet > player_money:
-                print("You do not have enough money for this bet.\
-                 You should place a lower bet\n")
+                print("You do not have enough money for this bet."
+                      "You should place a lower bet\n")
                 continue
             elif bet < 1:
                 print("You need to bet at least 1\n")
@@ -209,7 +115,7 @@ def play_round(money_left):
         if yourhand > DealerHand.value():
             print("You won this round.")
             if player_blackjack:
-                return True, math.floor(1.5*bet_value)
+                return True, math.floor(BLACKJACK_PAYOUT*bet_value)
             else:
                 return True, bet_value
         else:
@@ -218,8 +124,8 @@ def play_round(money_left):
     print("wrong end")
     return False, bet_value
 
-# main()
 
+# main()
 
 def main():
     holecards = False
