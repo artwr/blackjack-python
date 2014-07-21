@@ -31,7 +31,7 @@ BLACKJACK_PAYOUT = 3.0/2
 # Define auxiliary functions
 
 
-def draw_initial_hands(bljdeck, dealerholecard=False):
+def deal_initial_hands(bljdeck, dealerholecard=False):
     "Draw hands for the dealer and the player with two cards"
     initial_cards = bljdeck.draw_cards(ncards=4)
     dhand = cards.Hand(card_indices=[initial_cards[1], initial_cards[3]],
@@ -58,26 +58,29 @@ def bet(player_money):
                 continue
             else:
                 return bet
-    return bet
 
 
-def play_round(money_left):
-    bet_value = 0
-    bet_value += bet(money_left)
-    DealerHand, PlayerHand = draw_initial_hands()
+def play_round(bdeck, pmoney, pwholecard):
+    # Require user input for the bet
+    bet_value = bet(pmoney)
+
+    # Create the initial hands for the dealer and the player
+    DealerHand, PlayerHand = deal_initial_hands(bdeck, pwholecard)
+
+    # Display the initial hands
     print("The dealer's hand is:\n", DealerHand)
     print("Your hand is:\n", PlayerHand)
-    if PlayerHand.value() == 21:
-        print("You have a Blackjack")
-        player_blackjack = True
-    else:
-        player_blackjack = False
-    # Require user action
+    # Check for a blackjack
+    player_blackjack = PlayerHand.value() == 21
+    if player_blackjack:
+        print("You have a Blackjack\n")
+
+    # Require user input for hand resolution
     while True:
-        chosen_action = input("What would you like to do?\
-         [H]it, [S]tand, Increase your [B]et?\n")
+        chosen_action = input("What would you like to do?\n"
+                              "[H]it or [S]tand?  :")
         if chosen_action in ["H", "h"]:
-            PlayerHand.add_card(draw_card())
+            PlayerHand.add_card(bdeck.draw_cards())
             print("Your hand is now:\n", PlayerHand)
             print("Value: {} \n".format(PlayerHand.value()))
             if PlayerHand.value() > 21:
@@ -85,16 +88,16 @@ def play_round(money_left):
                 return False, bet_value
             else:
                 continue
-        elif chosen_action in ["B", "b"]:
-            bet_value += bet(money_left - bet_value)
         elif chosen_action in ["S", "s"]:
             yourhand = PlayerHand.value()
             break
         else:
-            print("Please make another selection using 'h','b' or 's'\n")
+            print("Please make another selection using 'h' or 's'\n")
             continue
+
     # Resolve Dealer
-    DealerHand.reveal_cards()
+    if pwholecard:
+        DealerHand.reveal_holecard()
     print("The dealer's hand is:\n", DealerHand)
     if DealerHand.value() == 21:
         print("The dealer has a Blackjack")
@@ -106,7 +109,7 @@ def play_round(money_left):
             return False, bet_value
     while DealerHand.value() < 17:
         print("The dealer draws a card\n")
-        DealerHand.add_card(draw_card())
+        DealerHand.add_card(bdeck.draw_cards())
         print("The dealer's hand is now:\n", DealerHand)
     if DealerHand.value() > 21:
         print("The dealer busted\n")
@@ -125,17 +128,48 @@ def play_round(money_left):
     return False, bet_value
 
 
+def print_welcome_msg():
+    """Prints a welcome message"""
+    print("\n\nWelcome to our blackjack table\n")
+    print(u" "*12+u"A\u2661 K\u2660"+u" "*12+"\n")
+
+
+def game_action():
+    while True:
+        chosen_action = input("Would you like to:\n"
+                              "1. [P]lay another round or\n"
+                              "2. [Q]uit?\n")
+        if chosen_action in ["P", "p", "1"]:
+            return "p"
+        elif chosen_action in ["Q", "q", "2"]:
+            return
+        else:
+            print("Please make another selection using 'p' or 'q'\n")
+            continue
+
+
 # main()
 
 def main():
-    holecards = False
+    # Welcome message
+    print_welcome_msg()
+
+    # Setup global variables
+    play_with_holecards = False
     player_money = 100
-    print("Welcome to our blackjack table")
+    ndecks = 2
     nround = 0
+
+    # Setup Deck
+    bdeck = cards.Deck(ndecks)
+
+    # Start round loop
     while player_money > 0:
         print("Round "+str(nround))
         print("You have "+str(player_money)+" money units.")
-        win, bet = play_round(player_money)
+        if bdeck.number_cards_left < 8:
+            bdeck = cards.Deck(ndecks)
+        win, bet = play_round(bdeck, player_money, play_with_holecards)
         if win:
             player_money += bet
         else:
