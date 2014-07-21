@@ -138,17 +138,17 @@ class Hand(CardCollection):
 
     def value(self):
         "returns the value of the hand"
-        handvalue = -1
+        hand_value = -1
         card_ranks = sorted([card.rank for card in self.cards], reverse=True)
-        handvalue = sum([min(FACE_CARD_VALUE, r+1) for r in card_ranks if r > 0])
+        hand_value = sum([min(FACE_CARD_VALUE, r+1) for r in card_ranks if r > 0])
         num_aces = card_ranks.count(0)
         if num_aces > 0:
-            use_aces_as_one = handvalue + 10 + 1 * num_aces > BUST_LIMIT_VALUE
+            use_aces_as_one = hand_value + 10 + 1 * num_aces > BUST_LIMIT_VALUE
             if use_aces_as_one:
-                handvalue += num_aces
+                hand_value += num_aces
             else:
-                handvalue += 10 + 1 * num_aces
-        return handvalue
+                hand_value += 10 + 1 * num_aces
+        return hand_value
 
 
 # class DiscardPile(CardCollection):
