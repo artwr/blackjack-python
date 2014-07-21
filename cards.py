@@ -2,6 +2,7 @@
 """A module containing objects like Card, Hand, Deck for card games.
 """
 import random
+import sys
 import textwrap
 
 # Define Constants
@@ -34,9 +35,22 @@ class Card(object):
         """Create a card object and compute rank and suit
         from its index
         """
-        self.card = card_index
-        self.rank = self.card % 13
-        self.suit = self.card // 13
+        if isinstance(card_index, int):
+            self.card = card_index
+            self.rank = self.card % 13
+            self.suit = self.card // 13
+        elif isinstance(card_index, list):
+            try:
+                (card,) = card_index
+                if isinstance(card, int):
+                    self.card = card
+                    self.rank = self.card % 13
+                    self.suit = self.card // 13
+                else:
+                    raise TypeError
+            except ValueError:
+                print("the Card constructor must be supplied an int"
+                      "or a singleton list")
 
     def __str__(self):
         return u"{}{}".format(CARD_RANKS[self.rank], CARD_SUITS[self.suit])
