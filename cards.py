@@ -111,8 +111,20 @@ class Hand(CardCollection):
 
     def add_card(self, newcard):
         self.number_of_cards += 1
-        self.card_indices.append(newcard)
-        self.cards.append(Card(newcard))
+        if isinstance(newcard, int):
+            self.card_indices.append(newcard)
+            self.cards.append(Card(newcard))
+        elif isinstance(newcard, list):
+            try:
+                (card,) = newcard
+                if isinstance(card, int):
+                    self.card_indices.append(card)
+                    self.cards.append(Card(card))
+                else:
+                    raise TypeError
+            except ValueError:
+                print("add_card must be supplied an int"
+                      "or a singleton list")
 
     def reveal_holecard(self):
         self.card_indices.extend(self.hiddencard)
