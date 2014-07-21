@@ -10,6 +10,13 @@ class TestCard(unittest.TestCase):
         # make sure the shuffled sequence does not lose any elements
         self.assertEqual(self.card.__str__(), u"A\u2661")
 
+    def test_cardindexhigh(self):
+        self.assertRaises(ValueError,cards.Card,62)
+
+    def test_cardindexlow(self):
+        self.assertRaises(ValueError,cards.Card,-2)
+
+
 
 class TestHand(unittest.TestCase):
 

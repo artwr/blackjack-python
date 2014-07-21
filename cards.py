@@ -51,6 +51,8 @@ class Card(object):
             except ValueError:
                 print("the Card constructor must be supplied an int"
                       "or a singleton list")
+        if self.card < 0 or self.card > 51:
+            raise ValueError("The card_index must be between 0 and 51!")
 
     def __str__(self):
         return u"{}{}".format(CARD_RANKS[self.rank], CARD_SUITS[self.suit])
