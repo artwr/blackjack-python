@@ -6,6 +6,12 @@ The idea to just refactor the code for `Card`, `CardCollection`, `Hand` and `Dec
 
 `CardCollection` was created mostly to illustrate inheritance for both Hand and Deck.
 
+### Card class
+
+The design of the card class in relations to the other classes was an interesting problem. I originally wrote a simple constructor taking an int
+
+
+
 ### Card.value()
 
 I had originally thought of a map/reduce approach, but you need the total hand value without the aces before assigning a value of 1 or 11. My original code (still available in the prototypes folder) would return the correct value in all but one case: a hand containing n aces (n>1) and other cards such that the total counting one ace as 11 would be 22, e.g. A,A,K, or A,A,A,9. The first check would let the ace go to 11, ending in a bust, when it should have been counted as one.
@@ -15,7 +21,7 @@ In the end, I opted for a list comprehension which seemed more compact than tryi
 
 ### Deck
 
-The deck is designed as an extension of CardCollection. Note that the order is of importance here, and the `pop()` method used returns the last card of the internal list. The deck could have been implemented as a `deque` from the `collections` module, but in this instance, it seemed unnecessary. The only detail to carefully consider was printing the deck in the right order.
+The deck is designed as an extension of CardCollection. Note that the order is of importance here, and the `pop()` method used returns the last card of the internal list. The deck could have been implemented as a `deque` from the `collections` module, but in this instance, it seemed unnecessary. The only detail to carefully consider was printing the deck in the right order, so that the first card printed would also be the card returned by `Deck.draw_cards(1)`.
 
 ### blackjack.py
 
